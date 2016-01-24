@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var collection: UICollectionView!
+    
+    var musicPlayer: AVAudioPlayer!
+    @IBOutlet weak var soundBtn: UIButton!
     
     var pokemonArray = [Pokemon]()
     
@@ -19,6 +23,19 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         collection.delegate = self
         collection.dataSource = self
         parsePokemonCSV()
+        initAudio()
+    }
+    
+    func initAudio() {
+        let path = NSBundle.mainBundle().pathForResource("music", ofType: "mp3")!
+        do{
+            musicPlayer = try AVAudioPlayer(contentsOfURL: NSURL(string: path)!)
+            musicPlayer.prepareToPlay()
+            musicPlayer.numberOfLoops = -1
+            musicPlayer.play()
+        } catch let err as NSError {
+            print(err.debugDescription)
+        }
     }
     
     func parsePokemonCSV(){
@@ -61,6 +78,20 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         return CGSizeMake(105, 105)
+    }
+    
+    @IBAction func MusicButtonPressed(sender: UIButton!) {
+        
+        if musicPlayer.playing {
+            musicPlayer.stop()
+            sender.alpha = 0.2
+            // how to swap out icon?
+         //   sender.setImage(MuteIcon.png, forState: false)
+        } else {
+            musicPlayer.play()
+            sender.alpha = 1.0
+        //    sender.setImage(SoundIcon.png, forState: true)
+        }
     }
 }
 
