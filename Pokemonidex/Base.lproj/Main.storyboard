@@ -23,10 +23,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" ambiguous="YES" misplaced="YES" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="WKl-eS-6e6">
-                                <rect key="frame" x="0.0" y="55" width="600" height="44"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="tH9-Et-mFK">
                                 <rect key="frame" x="0.0" y="99" width="600" height="501"/>
                             </imageView>
@@ -43,13 +39,20 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="speaker" translatesAutoresizingMaskIntoConstraints="NO" id="e1K-tQ-WHj">
+                                        <rect key="frame" x="565" y="20" width="30" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="30" id="K5r-ME-goD"/>
+                                            <constraint firstAttribute="height" constant="30" id="Zz3-6T-Xtr"/>
+                                        </constraints>
+                                    </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b1T-vY-2o3">
                                         <rect key="frame" x="565" y="20" width="30" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="d3a-xk-Whq"/>
                                             <constraint firstAttribute="height" constant="30" id="paQ-te-mBB"/>
                                         </constraints>
-                                        <state key="normal" image="soundIcon"/>
+                                        <state key="normal" image="soundWaves"/>
                                         <connections>
                                             <action selector="MusicButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="65S-vP-Byt"/>
                                         </connections>
@@ -57,9 +60,11 @@
                                 </subviews>
                                 <color key="backgroundColor" red="1" green="0.36432963459049417" blue="0.39531833128641081" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="b1T-vY-2o3" firstAttribute="centerY" secondItem="e1K-tQ-WHj" secondAttribute="centerY" id="1lA-lO-fxi"/>
                                     <constraint firstAttribute="bottom" secondItem="b1T-vY-2o3" secondAttribute="bottom" constant="5" id="Bw2-Kq-8jU"/>
                                     <constraint firstItem="hLm-Fs-wza" firstAttribute="centerX" secondItem="rQH-9N-HCC" secondAttribute="centerX" id="TPB-cN-am6"/>
                                     <constraint firstAttribute="trailing" secondItem="b1T-vY-2o3" secondAttribute="trailing" constant="5" id="V0p-mF-sAe"/>
+                                    <constraint firstItem="b1T-vY-2o3" firstAttribute="centerX" secondItem="e1K-tQ-WHj" secondAttribute="centerX" id="ehb-Gn-UsJ"/>
                                     <constraint firstItem="hLm-Fs-wza" firstAttribute="centerY" secondItem="rQH-9N-HCC" secondAttribute="centerY" id="f4A-h3-hmq"/>
                                     <constraint firstAttribute="height" constant="55" id="pbb-MX-0qK"/>
                                 </constraints>
@@ -114,11 +119,16 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <searchBar contentMode="redraw" ambiguous="YES" misplaced="YES" searchBarStyle="minimal" placeholder="Search for Pokemon" translatesAutoresizingMaskIntoConstraints="NO" id="WKl-eS-6e6">
+                                <rect key="frame" x="0.0" y="55" width="600" height="44"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="lWq-Ut-7L5" firstAttribute="top" secondItem="WKl-eS-6e6" secondAttribute="bottom" constant="20" id="1SI-We-0rm"/>
                             <constraint firstItem="WKl-eS-6e6" firstAttribute="top" secondItem="rQH-9N-HCC" secondAttribute="bottom" constant="20" id="1tk-L0-zgi"/>
+                            <constraint firstItem="WKl-eS-6e6" firstAttribute="top" secondItem="rQH-9N-HCC" secondAttribute="bottom" id="4iR-Jm-Ljl"/>
                             <constraint firstItem="lWq-Ut-7L5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="8YT-FY-DwL"/>
                             <constraint firstAttribute="trailingMargin" secondItem="WKl-eS-6e6" secondAttribute="trailing" constant="20" id="AqL-o6-NfM"/>
                             <constraint firstItem="WKl-eS-6e6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="EzZ-lF-hWh"/>
@@ -143,6 +153,7 @@
                                 <exclude reference="1tk-L0-zgi"/>
                                 <exclude reference="AqL-o6-NfM"/>
                                 <exclude reference="EzZ-lF-hWh"/>
+                                <exclude reference="gZM-iP-sVo"/>
                                 <exclude reference="Qiy-l2-1g4"/>
                                 <exclude reference="Rhl-aW-eGX"/>
                                 <exclude reference="ckc-Eu-tla"/>
@@ -151,6 +162,7 @@
                     </view>
                     <connections>
                         <outlet property="collection" destination="lWq-Ut-7L5" id="6ol-sc-3Yw"/>
+                        <outlet property="searchBar" destination="WKl-eS-6e6" id="m8b-Oz-MBJ"/>
                         <outlet property="soundBtn" destination="b1T-vY-2o3" id="j7W-gn-HKK"/>
                     </connections>
                 </viewController>
@@ -162,6 +174,7 @@
     <resources>
         <image name="104" width="120" height="120"/>
         <image name="bg" width="1920" height="1200"/>
-        <image name="soundIcon" width="110" height="110"/>
+        <image name="soundWaves" width="101" height="75"/>
+        <image name="speaker" width="101" height="75"/>
     </resources>
 </document>
