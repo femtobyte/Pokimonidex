@@ -79,7 +79,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
+        let pokemon: Pokemon!
+        if inSearchMode {
+            pokemon = filteredPokemon[indexPath.row]
+        } else {
+            pokemon = pokemonArray[indexPath.row]
+        }
+        performSegueWithIdentifier("PokemonDetailVC", sender: pokemon)
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -126,6 +132,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             //  you could use a for loop and check the array yourself but it wouldn't be as efficient or fast.
             filteredPokemon = pokemonArray.filter({$0.name.rangeOfString(lower) != nil})
             collection.reloadData()
+        }
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "PokemonDetailVC" {
+            if let detailsVC = segue.destinationViewController as? PokemonDetailVC {
+                if let pokemon = sender as? Pokemon {
+                    detailsVC.pokemon = pokemon 
+                }
+            }
         }
     }
 }
