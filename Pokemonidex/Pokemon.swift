@@ -25,6 +25,17 @@ class Pokemon {
     private var _nextEvolutionID: String!
     private var _nextEvolutionLvl: String!
     private var _pokemonUrl: String!
+    private var _moveList = [0]     // This array holds a list of moveID's specific to the pokemon being looked at.
+    private var _moveName: String!  // to hold the move name that will be passed in from PokemonVC so I can look up certain move for learntype
+    private var _learnType: String!
+    
+    var learnType: String {
+        return _learnType
+    }
+    
+    var moveName: String {
+        return _moveName
+    }
     
     var name: String {
         return _name
@@ -96,16 +107,42 @@ class Pokemon {
         }
         return _nextEvolutionLvl
     }
+    
+    var moveList: [Int] {
+        return _moveList
+    }
   
     init(name: String, pokedexId: Int){
         self._name = name
         self._pokedexId = pokedexId
         _pokemonUrl = "\(URL_BASE)\(URL_POKEMON)\(self._pokedexId)/"
-        print("\(_pokemonUrl)")
     }
     
+    func setMoveName(moveName: String){
+       self._moveName = moveName
+    }
+    
+    func downloadLearnType(completed: DownloadComplete){
+        let pokemonUrl =  _pokemonUrl
+        let url = NSURL(string:  pokemonUrl)!
+        Alamofire.request(.GET, url).responseJSON {response in
+            let result = response.result
+            if let dict = result.value as? Dictionary<String, AnyObject> {
+                if let moves = dict["moves"] as? [Dictionary<String, AnyObject>] {
+                    let moveKey = moves.filter({$0["name"]?.capitalizedString == self._moveName.capitalizedString})
+                    if let learnType = moveKey[0]["learn_type"] {
+                        self._learnType = learnType as! String
+                    }
+                }
+            }
+            completed()
+        }
+    }
+
     func downloadPokemonDetails(completed: DownloadComplete) {
+        // have to turn url's into NSURL's'
         let url = NSURL(string: _pokemonUrl)!
+        // this request has a closure on it - after the download is done, run the block of code in the braces ({response in  ..code.. }
         Alamofire.request(.GET, url).responseJSON {response in
             let result = response.result
             // convert JSON into dictionary
@@ -150,7 +187,34 @@ class Pokemon {
                     }
                     print(self._type)
                 }
-               
+                
+                if let moves = dict["moves"] as? [Dictionary<String, AnyObject>] where moves.count > 0 {
+                    if let uris = moves[0]["resource_uri"]{
+                        do{
+                            for move in moves {
+                                if let id = move["resource_uri"] as? String{
+                                    let newStr = id.stringByReplacingOccurrencesOfString("/api/v1/move/", withString: "")
+                                    let numStr = newStr.stringByReplacingOccurrencesOfString("/", withString: "")
+                                    // following 2 lines are how I read you convert a string to int in swift 2.0.  
+                                    // You use NSNumberFormatter to convert it to a NSNumber, then get it's integerValue
+                                    if let num = NSNumberFormatter().numberFromString(numStr){
+                                        var pokeMoveId = num.integerValue
+                                        self._moveList.append(pokeMoveId)
+                                        
+                                    }
+                                }
+                            }
+                        } catch {
+                            print("caught: \(error)")
+                        }
+                        // wasn't sure how to initialize without putting a value in, seemed to stay nil.  There are no moves with id of 0, so removing this from array
+                        if self._moveList[0] == 0 {
+                            self._moveList.removeFirst()
+                        }
+                    }
+                }
+                
+                
                 if let evolutions = dict["evolutions"] as? [Dictionary<String, AnyObject>] where evolutions.count > 0 {
                     if let evolution = evolutions[0]["to"] as? String {
                         // this api has some mega pokemon that this app will not be supporting so ruling them out
@@ -164,14 +228,12 @@ class Pokemon {
                                 self._nextEvolutionTxt = evolution
                                 if let lvl = evolutions[0]["level"] as? Int {
                                     self._nextEvolutionLvl = "\(lvl)"
+                                } else {
+                                    self._nextEvolutionLvl = ""
                                 }
                             }
                         }
-                    } else {
-                        print("evolution 'to' not found")
                     }
-                } else {
-                    print("evolutions array not found")
                 }
                 
                 if let descArray = dict["descriptions"] as? [Dictionary<String, String>] where descArray.count > 0  {
@@ -182,13 +244,16 @@ class Pokemon {
                             if let descDict = descResult.value as? Dictionary<String, AnyObject> {
                                 if let description = descDict["description"] as? String {
                                     self._description = description
-                                    print(self._description)
                                 }
                             }
                             completed() // calling completed after second download from descriptions is done
                         }
                     }
+                } else {
+                    self._description = ""
+                    completed()
                 }
+                
             }
         }
     }
